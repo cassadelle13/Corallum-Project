@@ -1,0 +1,1470 @@
+
+:root {
+  --bg-dark: #000000;
+  --bg-panel: rgba(20, 22, 32, 0.7);
+  --accent-primary: #007AFF;
+  --accent-secondary: #5856D6;
+  --neon-blue: #007AFF;
+  --neon-purple: #5856D6;
+  --neon-pink: #FF2D92;
+  
+  /* Apple-style glassmorphism variables */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-hover: rgba(255, 255, 255, 0.12);
+  --glass-bg-active: rgba(255, 255, 255, 0.15);
+  --glass-border-light: rgba(255, 255, 255, 0.18);
+  --glass-border-medium: rgba(255, 255, 255, 0.12);
+  --glass-border-dark: rgba(255, 255, 255, 0.08);
+  --glass-shadow-light: rgba(0, 0, 0, 0.1);
+  --glass-shadow-medium: rgba(0, 0, 0, 0.2);
+  --glass-shadow-heavy: rgba(0, 0, 0, 0.3);
+  
+  --text-main: rgba(255, 255, 255, 0.92);
+  --text-dim: rgba(255, 255, 255, 0.6);
+  --text-dimmer: rgba(255, 255, 255, 0.4);
+  --node-bg: rgba(30, 41, 59, 0.7);
+}
+
+/* ============= GLOBAL STYLES ============= */
+
+/* Подавление всех outline и focus эффектов в проекте */
+* {
+  outline: none !important;
+}
+
+*:focus,
+*:focus-visible,
+*:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Подавление React Flow стандартных стилей выделения */
+.react-flow__node,
+.react-flow__node-default,
+.react-flow__node.selected {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+body {
+  background-color: var(--bg-dark) !important;
+  background: 
+    radial-gradient(ellipse at top left, rgba(0, 122, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(88, 86, 214, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.02) 0%, transparent 70%),
+    linear-gradient(180deg, #000000 0%, #0a0a0a 100%) !important;
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.25) 0%, transparent 50%);
+  animation: neonPulse 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes neonPulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+    filter: blur(40px);
+  }
+  25% {
+    opacity: 0.9;
+    transform: scale(1.1);
+    filter: blur(50px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.95);
+    filter: blur(45px);
+  }
+  75% {
+    opacity: 0.95;
+    transform: scale(1.05);
+    filter: blur(48px);
+  }
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, transparent 30%, rgba(99, 102, 241, 0.15) 50%, transparent 70%),
+    linear-gradient(-45deg, transparent 30%, rgba(139, 92, 246, 0.15) 50%, transparent 70%);
+  background-size: 200% 200%;
+  animation: neonFlow 12s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+
+@keyframes neonFlow {
+  0% {
+    background-position: 0% 0%, 100% 100%;
+  }
+  50% {
+    background-position: 100% 100%, 0% 0%;
+  }
+  100% {
+    background-position: 0% 0%, 100% 100%;
+  }
+}
+
+.app-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  overflow: hidden;
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============= APPLE STYLE GLASSMORPHISM ============= */
+.glass-panel {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid var(--glass-border-light) !important;
+  box-shadow: 
+    0 8px 32px var(--glass-shadow-light),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.glass-panel:hover {
+  background: var(--glass-bg-hover) !important;
+  border-color: var(--glass-border-medium) !important;
+  box-shadow: 
+    0 12px 40px var(--glass-shadow-medium),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-1px) !important;
+}
+
+.glass-panel:active {
+  background: var(--glass-bg-active) !important;
+  transform: translateY(0) scale(0.98) !important;
+}
+
+.glass-panel-strong {
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(30px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
+  border: 1px solid var(--glass-border-medium) !important;
+  box-shadow: 
+    0 16px 48px var(--glass-shadow-medium),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+  border-radius: 16px !important;
+}
+
+.global-sidebar {
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+  border-right: 1px solid var(--glass-border-dark) !important;
+  box-shadow: 
+    4px 0 24px var(--glass-shadow-medium),
+    inset -1px 0 0 rgba(255, 255, 255, 0.05) !important;
+  z-index: 10;
+}
+
+
+
+.main-content {
+  background: transparent !important;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============= MODERN NODES ============= */
+.futuristic-node {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px;
+  padding: 0 !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  /* Размеры теперь задаются индивидуально для типов узлов */
+  position: relative;
+  box-sizing: border-box !important;
+}
+
+/* Состояние после успешного теста - включаем неон */
+.futuristic-node.node-tested {
+  background: rgba(45, 51, 67, 0.6) !important;
+  border: 1.5px solid var(--node-border-color, rgba(99, 102, 241, 0.4)) !important;
+  box-shadow: 0 0 12px var(--node-glow-color, rgba(99, 102, 241, 0.2)),
+              0 0 24px var(--node-glow-color, rgba(99, 102, 241, 0.1)),
+              0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Градиентная обводка через псевдоэлемент */
+.futuristic-node::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 9px;
+  background: var(--node-gradient, linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.15) 100%));
+  z-index: -1;
+  opacity: 0;
+  filter: blur(4px);
+  transition: opacity 0.4s ease;
+}
+
+.futuristic-node.node-tested::before {
+  opacity: 0.5;
+}
+
+.futuristic-node:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 0 12px var(--node-glow-color, rgba(99, 102, 241, 0.15)),
+              0 0 24px var(--node-glow-color, rgba(99, 102, 241, 0.08)),
+              0 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: var(--node-border-color, var(--accent-primary)) !important;
+}
+
+.futuristic-node:hover::before {
+  opacity: 0.8;
+}
+
+/* Отключение стандартного outline и border при выборе узла */
+.futuristic-node.node-selected {
+  outline: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.futuristic-node.node-selected::before {
+  opacity: 0 !important;
+}
+
+/* Отключение outline для React Flow селектед нодов */
+.react-flow__node.selected .futuristic-node {
+  outline: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.react-flow__node-default.selected .futuristic-node {
+  outline: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Категории узлов - неоновые обводки с градиентами */
+.node-category-trigger {
+  --node-border-color: #f97316;
+  --node-glow-color: rgba(249, 115, 22, 0.15);
+  --node-bg-color: rgba(249, 115, 22, 0.05);
+  --node-gradient: linear-gradient(135deg, rgba(249, 115, 22, 0.3) 0%, rgba(251, 146, 60, 0.2) 100%);
+}
+
+.node-category-operator {
+  --node-border-color: #6366f1;
+  --node-glow-color: rgba(99, 102, 241, 0.15);
+  --node-bg-color: rgba(99, 102, 241, 0.05);
+  --node-gradient: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.2) 100%);
+}
+
+.node-category-integration {
+  --node-border-color: #3b82f6;
+  --node-glow-color: rgba(59, 130, 246, 0.15);
+  --node-bg-color: rgba(59, 130, 246, 0.05);
+  --node-gradient: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(96, 165, 250, 0.2) 100%);
+}
+
+.node-category-resource {
+  --node-border-color: #64748b;
+  --node-glow-color: rgba(100, 116, 139, 0.12);
+  --node-bg-color: rgba(100, 116, 139, 0.05);
+  --node-gradient: linear-gradient(135deg, rgba(100, 116, 139, 0.2) 0%, rgba(148, 163, 184, 0.15) 100%);
+}
+
+.node-category-aiagent {
+  --node-border-color: #8b5cf6;
+  --node-glow-color: rgba(139, 92, 246, 0.15);
+  --node-bg-color: rgba(139, 92, 246, 0.05);
+  --node-gradient: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(168, 85, 247, 0.2) 100%);
+}
+
+/* Подключенные узлы - усиленная неоновая обводка */
+.node-connected {
+  box-shadow: 0 0 12px var(--node-glow-color, rgba(99, 102, 241, 0.2)),
+              0 0 24px var(--node-glow-color, rgba(99, 102, 241, 0.1)),
+              0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  border-width: 2px !important;
+}
+
+.node-connected::before {
+  opacity: 0.8 !important;
+}
+
+/* Ромбовидные узлы (Branch/IF) */
+.futuristic-node.node-diamond {
+  width: 100px !important;
+  height: 100px !important;
+  min-width: 100px !important;
+  min-height: 100px !important;
+  max-width: 100px !important;
+  max-height: 100px !important;
+  border-radius: 0 !important;
+  transform: rotate(45deg) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(45, 51, 67, 0.7) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%) !important;
+  border: 1.5px solid var(--node-border-color, rgba(99, 102, 241, 0.4)) !important;
+  overflow: visible !important;
+  padding: 0 !important;
+}
+
+.futuristic-node.node-diamond::before {
+  display: none !important;
+}
+
+.node-icon-only {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 24px;
+  color: var(--node-border-color);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.node-icon-only svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.node-diamond .node-icon-only {
+  transform: rotate(-45deg);
+}
+
+/* Центрирование иконок в узлах-триггерах */
+.futuristic-node.node-category-trigger .node-icon-only {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  /* Возвращаем отступ слева для визуального центрирования в асимметричной форме */
+  padding-left: 12px !important;
+  margin-left: 0 !important;
+}
+
+/* Круглые узлы (Resources) */
+.futuristic-node.node-circle,
+.react-flow__node .futuristic-node.node-circle,
+.react-flow__node-default .futuristic-node.node-circle {
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 60px !important;
+  min-height: 60px !important;
+  max-width: 60px !important;
+  max-height: 60px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(45, 51, 67, 0.7) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1.5px solid var(--node-border-color, rgba(100, 116, 139, 0.4)) !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.futuristic-node.node-circle::before {
+  border-radius: 50% !important;
+}
+
+/* /* Квадратные узлы (по умолчанию) */
+.futuristic-node.node-square,
+.react-flow__node .futuristic-node.node-square,
+.react-flow__node-default .futuristic-node.node-square {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  min-height: 80px !important;
+  max-width: 80px !important;
+  max-height: 80px !important;
+  border-radius: 8px;
+}
+
+/* Узел-плейсхолдер (+) */
+.futuristic-node.node-placeholder {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  min-height: 80px !important;
+  max-width: 80px !important;
+  max-height: 80px !important;
+  border: 2px dashed rgba(148, 163, 184, 0.5) !important;
+  background: rgba(30, 41, 59, 0.3) !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
+}
+
+.futuristic-node.node-placeholder:hover {
+  border-color: var(--node-border-color) !important;
+  background: rgba(30, 41, 59, 0.5) !important;
+  transform: scale(1.05);
+}
+
+.futuristic-node.node-placeholder::before {
+  display: none !important;
+}
+
+.placeholder-plus {
+  font-size: 32px;
+  color: rgba(148, 163, 184, 0.8);
+  font-weight: 300;
+}
+
+.futuristic-node.node-placeholder:hover .placeholder-plus {
+  color: var(--node-border-color);
+}
+
+/* Усиленный селектор для узлов-триггеров */
+.react-flow__node .futuristic-node.node-category-trigger,
+.react-flow__node-default .futuristic-node.node-category-trigger {
+  border-top-left-radius: 50px !important;
+  border-bottom-left-radius: 50px !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+/* Стиль n8n для триггеров: сильно закругленные левые углы */
+.futuristic-node.node-category-trigger {
+  border-top-left-radius: 50px !important;
+  border-bottom-left-radius: 50px !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+.futuristic-node.node-category-trigger::before {
+  border-top-left-radius: 50px !important;
+  border-bottom-left-radius: 50px !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+/* Прямоугольные узлы (AI Agent) */
+.futuristic-node.node-rectangle,
+.react-flow__node .futuristic-node.node-rectangle,
+.react-flow__node-default .futuristic-node.node-rectangle,div[data-type="aiagent"] {
+  width: 200px !important;
+  height: 80px !important;
+  min-width: 200px !important;
+  min-height: 80px !important;
+  max-width: 200px !important;
+  max-height: 80px !important;
+  border-radius: 8px;
+  box-sizing: border-box !important;
+}
+
+/* Квадратные узлы (по умолчанию) */
+.futuristic-node.node-square,
+.react-flow__node .futuristic-node.node-square,
+.react-flow__node-default .futuristic-node.node-square {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  min-height: 80px !important;
+  max-width: 80px !important;
+  max-height: 80px !important;
+}
+
+/* Ромбовидные узлы (Branch) */
+.futuristic-node.node-diamond,
+.react-flow__node .futuristic-node.node-diamond,
+.react-flow__node-default .futuristic-node.node-diamond {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  min-height: 80px !important;
+  max-width: 80px !important;
+  max-height: 80px !important;
+}
+
+/* Круглые узлы (Resources) */
+.futuristic-node.node-circle,
+.react-flow__node .futuristic-node.node-circle,
+.react-flow__node-default .futuristic-node.node-circle {
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 60px !important;
+  min-height: 60px !important;
+  max-width: 60px !important;
+  max-height: 60px !important;
+}
+
+.node-circle-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.node-circle-icon {
+  color: var(--node-border-color, #64748b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.node-circle-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.node-circle-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Галочка успешного подключения */
+.node-success-check {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6),
+              0 0 20px rgba(16, 185, 129, 0.4);
+  z-index: 10;
+  animation: checkPulse 2s ease-in-out infinite;
+}
+
+.node-success-check svg {
+  color: white;
+  stroke-width: 3;
+}
+
+@keyframes checkPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+/* Иконка триггера (молния) */
+.node-trigger-icon {
+  position: absolute;
+  top: 50%;
+  left: -22px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transform: translateY(-50%);
+}
+
+.node-trigger-icon svg {
+  color: #f97316;
+  stroke-width: 2.5;
+  width: 18px;
+  height: 18px;
+}
+
+/* Текстовая подпись под узлом */
+.node-label {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--text-main);
+  text-align: center;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 5;
+}
+
+/* Стили для полного дизайна узлов */
+.node-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.node-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--node-border-color, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.node-icon-wrapper svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.node-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.node-body {
+  padding: 8px 16px 12px;
+}
+
+.node-code-preview {
+  font-size: 11px;
+  color: var(--text-dim);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Увеличиваем размеры квадратных узлов для полного дизайна */
+.futuristic-node.node-square,
+.react-flow__node .futuristic-node.node-square,
+.react-flow__node-default .futuristic-node.node-square {
+  width: 200px !important;
+  height: 120px !important;
+  min-width: 200px !important;
+  min-height: 120px !important;
+  max-width: 200px !important;
+  max-height: 120px !important;
+  border-radius: 12px;
+}
+
+/* ============= FORCE UPDATE КЛАСС - МАКСИМАЛЬНЫЙ ПРИОРИТЕТ ============= */
+.futuristic-node.force-update-2024 {
+  /* ПЕРЕОПРЕДЕЛЯЕМ ВСЕ ПАРАМЕТРЫ НАПРЯМУЮ */
+  width: var(--force-width, 80px) !important;
+  height: var(--force-height, 80px) !important;
+  min-width: var(--force-width, 80px) !important;
+  min-height: var(--force-height, 80px) !important;
+  max-width: var(--force-width, 80px) !important;
+  max-height: var(--force-height, 80px) !important;
+  border-radius: var(--force-radius, 8px) !important;
+}
+
+/* AI Agent - особые размеры */
+.futuristic-node.force-update-2024.node-configuration {
+  width: 180px !important;
+  height: 80px !important;
+  min-width: 180px !important;
+  min-height: 80px !important;
+  max-width: 180px !important;
+  max-height: 80px !important;
+  border-radius: 8px !important;
+}
+
+/* Триггеры - особые закругления */
+.futuristic-node.force-update-2024.node-trigger {
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  min-height: 80px !important;
+  max-width: 80px !important;
+  max-height: 80px !important;
+  border-radius: 40px 8px 8px 40px !important;
+}
+
+/* ============= N8N STYLE NODES WITH GLASSMORPHISM ============= */
+.futuristic-node {
+  /* МИНИМАЛЬНЫЕ размеры - реально маленькие */
+  --canvas-node--width: 100px;
+  --canvas-node--height: 36px;
+  --canvas-node--border-width: 1px;
+  --trigger-node--radius: 18px;
+  --node--icon--size: 16px;
+  --node--icon--color: var(--node-icon-color, #64748b);
+
+  position: relative;
+  /* FORCE размеры с !important */
+  width: var(--force-width, var(--canvas-node--width)) !important;
+  height: var(--force-height, var(--canvas-node--height)) !important;
+  min-width: var(--force-width, var(--canvas-node--width)) !important;
+  min-height: var(--force-height, var(--canvas-node--height)) !important;
+  max-width: var(--force-width, var(--canvas-node--width)) !important;
+  max-height: var(--force-height, var(--canvas-node--height)) !important;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Наш фирменный glassmorphism */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-clip: padding-box;
+  
+  /* Неоновые градиенты */
+  border: var(--canvas-node--border-width) solid var(--node-border-color, #64748b);
+  border-radius: var(--radius--lg, 4px) !important;
+  
+  /* Неоновое свечение */
+  box-shadow: 
+    0 0 10px var(--node-glow-color, rgba(100, 116, 139, 0.2)),
+    0 0 20px var(--node-glow-color, rgba(100, 116, 139, 0.1)),
+    0 2px 6px rgba(0, 0, 0, 0.15);
+  
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: visible;
+}
+
+/* Триггеры - скругленные слева */
+.futuristic-node.node-trigger {
+  border-radius: var(--trigger-node--radius) var(--radius--lg) var(--radius--lg) var(--trigger-node--radius) !important;
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  min-height: 80px !important;
+  max-width: 80px !important;
+  max-height: 80px !important;
+}
+
+.futuristic-node.node-trigger.running::after,
+.futuristic-node.node-trigger.waiting::after {
+  border-radius: var(--trigger-node--radius) var(--radius--lg) var(--radius--lg) var(--trigger-node--radius) !important;
+}
+
+/* Конфигурационные узлы - прямоугольные (AI Agent) */
+.futuristic-node.node-configuration {
+  border-radius: 8px !important;
+  width: 180px !important;
+  height: 80px !important;
+  min-width: 180px !important;
+  min-height: 80px !important;
+  max-width: 180px !important;
+  max-height: 80px !important;
+}
+
+.futuristic-node.node-configuration.running::after,
+.futuristic-node.node-configuration.waiting::after {
+  border-radius: 8px !important;
+}
+
+/* Настраиваемые узлы - такие же закругления как AI Agent */
+.futuristic-node.node-configurable {
+  border-radius: 8px !important;
+  width: 80px !important;
+  height: 80px !important;
+  min-width: 80px !important;
+  min-height: 80px !important;
+  max-width: 80px !important;
+  max-height: 80px !important;
+}
+
+/* Состояния в стиле n8n */
+.futuristic-node.selected {
+  box-shadow: 
+    0 0 0 6px var(--node-glow-color, rgba(100, 116, 139, 0.3)),
+    0 0 30px var(--node-glow-color, rgba(100, 116, 139, 0.4)),
+    0 0 60px var(--node-glow-color, rgba(100, 116, 139, 0.2));
+}
+
+.futuristic-node.success {
+  --canvas-node--border-width: 2.5px;
+  --node-border-color: var(--success-color, #10b981);
+  --node-glow-color: rgba(16, 185, 129, 0.3);
+}
+
+.futuristic-node.error {
+  --node-border-color: var(--error-color, #ef4444);
+  --node-glow-color: rgba(239, 68, 68, 0.3);
+}
+
+.futuristic.node.running {
+  border-color: transparent;
+  --node-border-color: var(--running-color, #f59e0b);
+  --node-glow-color: rgba(245, 158, 11, 0.4);
+}
+
+.futuristic-node.waiting {
+  --node-border-color: transparent;
+}
+
+.futuristic-node.disabled {
+  --node-border-color: var(--disabled-color, #6b7280);
+  --node-glow-color: rgba(107, 114, 128, 0.2);
+  opacity: 0.6;
+}
+
+.futuristic-node.pinned {
+  --canvas-node--border-width: 2.5px;
+  --node-border-color: var(--pinned-color, #8b5cf6);
+  --node-glow-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Hover эффекты */
+.futuristic-node:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 0 25px var(--node-glow-color, rgba(100, 116, 139, 0.3)),
+    0 0 50px var(--node-glow-color, rgba(100, 116, 139, 0.2)),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Контент узла */
+.node-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 12px;
+  padding: 0 16px;
+}
+
+/* Иконка в стиле n8n */
+.node-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--node-icon-color);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: all 0.3s ease;
+}
+
+.futuristic-node.node-configuration .node-icon {
+  position: absolute;
+}
+
+.futuristic-node.node-configurable .node-icon {
+  flex-shrink: 0;
+}
+
+/* Текстовая информация */
+.node-text {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.node-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main, rgba(255, 255, 255, 0.95));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.node-subtitle {
+  font-size: 11px;
+  color: var(--text-dim, rgba(255, 255, 255, 0.6));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+/* Статусные иконки */
+.node-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.status-success {
+  color: var(--success-color, #10b981);
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6));
+  animation: checkPulse 2s ease-in-out infinite;
+}
+
+.status-error {
+  color: var(--error-color, #ef4444);
+  filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
+  animation: errorPulse 1s ease-in-out infinite;
+}
+
+.status-pinned {
+  color: var(--pinned-color, #8b5cf6);
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6));
+}
+
+.status-running {
+  width: 12px;
+  height: 12px;
+  background: var(--running-color, #f59e0b);
+  border-radius: 50%;
+  animation: runningPulse 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+}
+
+/* Анимированная обводка для запущенных узлов (n8n style) */
+.node-animation {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  z-index: -1;
+  background: conic-gradient(
+    from 0deg,
+    var(--running-color, #f59e0b),
+    var(--running-color, #f59e0b) 20%,
+    rgba(245, 158, 11, 0.2) 35%,
+    rgba(245, 158, 11, 0.2) 65%,
+    var(--running-color, #f59e0b) 90%,
+    var(--running-color, #f59e0b)
+  );
+  animation: borderRotate 1.5s linear infinite;
+}
+
+.futuristic-node.waiting .node-animation {
+  animation-duration: 4.5s;
+}
+
+/* Handles в стиле n8n - МИНИАТЮРНЫЕ */
+.handle-neon {
+  width: 8px;
+  height: 8px;
+  background: var(--node-border-color, #64748b);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  position: absolute;
+  z-index: 10;
+  box-shadow: 
+    0 0 4px var(--node-glow-color, rgba(100, 116, 139, 0.6)),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.handle-trigger {
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--trigger-color, #ff6d4a);
+  box-shadow: 
+    0 0 6px rgba(255, 109, 74, 0.8),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.handle-input {
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.handle-output {
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.handle-neon:hover {
+  transform: translateY(-50%) scale(1.5);
+  box-shadow: 
+    0 0 8px var(--node-glow-color, rgba(100, 116, 139, 0.8)),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.handle-trigger:hover {
+  transform: translateY(-50%) scale(1.5);
+  box-shadow: 
+    0 0 12px rgba(255, 109, 74, 1),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Анимации */
+@keyframes borderRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes checkPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes errorPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes runningPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.8);
+  }
+}
+
+/* ============= NEON EDGES ============= */
+.react-flow__edge-path {
+  stroke: var(--accent-primary) !important;
+  stroke-width: 3 !important;
+  filter: drop-shadow(0 0 5px var(--accent-primary)) !important;
+  stroke-dasharray: 10;
+  animation: dash 20s linear infinite;
+}
+
+@keyframes dash {
+  from { stroke-dashoffset: 1000; }
+  to { stroke-dashoffset: 0; }
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--neon-blue) !important;
+  filter: drop-shadow(0 0 8px var(--neon-blue)) !important;
+}
+
+.handle-neon {
+  width: 8px !important;
+  height: 8px !important;
+  background: #94a3b8 !important; /* Нейтральный серо-голубой цвет */
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  z-index: 10 !important;
+  transition: all 0.2s ease;
+}
+
+.handle-neon:hover {
+  background: #cbd5e1 !important;
+  transform: scale(1.2);
+}
+
+.handle-diamond {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 0 !important;
+  transform: rotate(45deg) !important;
+}
+
+/* ============= CUSTOM SCROLLBARS ============= */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* ============= ANIMATIONS ============= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.home-view, .app, .global-sidebar, .list-item {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* ============= BUTTONS & HOVER ============= */
+.btn-action, .nav-item, .sidebar-item, .list-item {
+  transition: all 0.2s ease !important;
+}
+
+.btn-action:hover {
+  background: var(--accent-primary) !important;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+  transform: translateY(-1px);
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.2) 0%, transparent 100%) !important;
+  border-left: 3px solid var(--accent-primary) !important;
+}
+
+/* ============= LOGO STYLING ============= */
+.brand-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-right: 10px;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+  flex-shrink: 0;
+}
+
+.toolbar-logo-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  margin-right: 8px;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+/* ============= SEARCH INPUTS ============= */
+.sidebar-search-input, .search-bar input {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  outline: none !important;
+}
+
+.sidebar-search-trigger .search-item {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 4px 12px;
+}
+
+.sidebar-search-input {
+  font-size: 13px;
+  width: 100%;
+  margin-left: 8px;
+}
+
+.sidebar-search-input::placeholder {
+  color: var(--text-dim);
+}
+
+/* ============= HOME VIEW LIST ITEMS ============= */
+.list-item {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(5px);
+}
+
+.list-item:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+  transform: translateX(5px);
+}
+
+/* ============= TOOLBAR & LOGS ============= */
+.toolbar {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
+}
+
+.execution-logs {
+  background: rgba(10, 11, 16, 0.9) !important;
+  backdrop-filter: blur(20px) !important;
+  border-top: 1px solid var(--glass-border) !important;
+}
+
+.test-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 380px;
+  max-height: 400px;
+  z-index: 2000;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%) opacity(0); }
+  to { transform: translateX(0) opacity(1); }
+}
+
+.test-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.test-panel-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.test-panel-header button {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.test-panel-header button:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.test-panel-content {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.test-panel-content pre {
+  margin: 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ============= MINIMAP STYLING ============= */
+.react-flow__minimap {
+  background: rgba(15, 15, 20, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ============= APPLE STYLE BUTTONS ============= */
+.btn-action, .btn-secondary, .btn-primary {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid var(--glass-border-light) !important;
+  box-shadow: 
+    0 4px 16px var(--glass-shadow-light),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  color: var(--text-main) !important;
+}
+
+.btn-action:hover, .btn-secondary:hover, .btn-primary:hover {
+  background: var(--glass-bg-hover) !important;
+  border-color: var(--glass-border-medium) !important;
+  box-shadow: 
+    0 6px 20px var(--glass-shadow-medium),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-action:active, .btn-secondary:active, .btn-primary:active {
+  background: var(--glass-bg-active) !important;
+  transform: translateY(0) scale(0.96) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
+  opacity: 0.9 !important;
+}
+
+/* ============= APPLE STYLE INPUTS ============= */
+input, textarea, select {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid var(--glass-border-medium) !important;
+  box-shadow: 
+    inset 0 2px 8px var(--glass-shadow-light),
+    0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  color: var(--text-main) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  background: var(--glass-bg-hover) !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 
+    inset 0 2px 8px var(--glass-shadow-light),
+    0 0 0 1px var(--accent-primary),
+    0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ============= APPLE STYLE CARDS ============= */
+.list-item, .resource-item, .schedule-item {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid var(--glass-border-light) !important;
+  box-shadow: 
+    0 2px 12px var(--glass-shadow-light),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03) !important;
+  border-radius: 12px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.list-item:hover, .resource-item:hover, .schedule-item:hover {
+  background: var(--glass-bg-hover) !important;
+  border-color: var(--glass-border-medium) !important;
+  box-shadow: 
+    0 4px 16px var(--glass-shadow-medium),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.react-flow__minimap-canvas {
+  filter: blur(0.5px);
+}
+
+/* ============= COLLAPSED SIDEBAR ============= */
+.global-sidebar.collapsed {
+  width: 64px !important;
+  overflow: hidden;
+}
+
+.global-sidebar.collapsed .sidebar-brand span,
+.global-sidebar.collapsed .sidebar-search-trigger span,
+.global-sidebar.collapsed .nav-item span,
+.global-sidebar.collapsed .section-label,
+.global-sidebar.collapsed .sidebar-footer-nav span {
+  display: none !important;
+}
+
+.global-sidebar.collapsed .sidebar-search-trigger {
+  padding: 0 8px 20px;
+  align-items: center;
+}
+
+.global-sidebar.collapsed .search-button,
+.global-sidebar.collapsed .ask-ai-button {
+  justify-content: center;
+  padding: 8px;
+  width: 40px;
+}
+
+.global-sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.global-sidebar.collapsed .sidebar-brand {
+  padding: 16px 0;
+  justify-content: center;
+}
+
+.global-sidebar.collapsed .brand-logo-img {
+  margin-right: 0;
+}

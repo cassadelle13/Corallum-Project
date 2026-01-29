@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connection Test</title>
+</head>
+<body>
+    <h1>Testing Corallum Connection</h1>
+    <div id="result"></div>
+    
+    <script>
+        async function testConnection() {
+            const urls = [
+                'http://localhost:3002',
+                'http://127.0.0.1:3002',
+                'http://0.0.0.0:3002'
+            ];
+            
+            const result = document.getElementById('result');
+            
+            for (const url of urls) {
+                try {
+                    const response = await fetch(url);
+                    result.innerHTML += `<p>✅ ${url} - Status: ${response.status}</p>`;
+                } catch (error) {
+                    result.innerHTML += `<p>❌ ${url} - Error: ${error.message}</p>`;
+                }
+            }
+        }
+        
+        testConnection();
+    </script>
+</body>
+</html>
