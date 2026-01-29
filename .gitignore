@@ -4,3 +4,7 @@ __pycache__/
 *.log
 *.db
 *.sqlite
+node_modules/
+.venv/
+jarilo-ecosystem/workspaces/
+source-code-cj/
