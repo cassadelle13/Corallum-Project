@@ -316,30 +316,9 @@ npm run lint
 npm run lint:fix
 ```
 
-## 📚 Documentation
-
-- [API Reference](./docs/api.md)
-- [Architecture Guide](./docs/architecture.md)
-- [Security Guide](./docs/security.md)
-- [Deployment Guide](./docs/deployment.md)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- 📧 Email: enterprise@corallum.com
-- 💬 Discord: [Corallum Community](https://discord.gg/corallum)
-- 📖 Documentation: [docs.corallum.com](https://docs.corallum.com)
 
 ## 🎯 Roadmap
 
