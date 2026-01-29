@@ -1,3 +1,5 @@
+**Frontend:** [https://cassadelle13.github.io/Corallum-Project/](https://cassadelle13.github.io/Corallum-Project/)
+
 # 🏢 Corallum Enterprise - AI-Powered Workflow Automation Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
