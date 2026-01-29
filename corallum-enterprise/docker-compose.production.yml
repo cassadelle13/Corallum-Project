@@ -1,0 +1,229 @@
+# Production Docker Compose
+# Enterprise-ready deployment with all services
+
+version: '3.8'
+
+services:
+  # Main Application
+  corallum-enterprise:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: corallum-enterprise
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    environment:
+      - NODE_ENV=production
+      - PORT=8003
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=corallum_production
+      - DB_USER=corallum
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AI_PROVIDER=ollama
+      - AI_MODEL=llama2
+      - AI_BASE_URL=http://ollama:11434
+      - INNGEST_API_KEY=${INNGEST_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - LOG_LEVEL=info
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+      - ./knowledge-base:/app/knowledge-base
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    networks:
+      - corallum-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: corallum-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=corallum_production
+      - POSTGRES_USER=corallum
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - corallum-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U corallum -d corallum_production"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: corallum-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+    networks:
+      - corallum-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Ollama for Local AI
+  ollama:
+    image: ollama/ollama:latest
+    container_name: corallum-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_MODELS=llama2,mistral
+    networks:
+      - corallum-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: corallum-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - corallum-enterprise
+    networks:
+      - corallum-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Monitoring Stack
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: corallum-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - corallum-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: corallum-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    networks:
+      - corallum-network
+
+  # Log Aggregation
+  loki:
+    image: grafana/loki:latest
+    container_name: corallum-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki.yml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - corallum-network
+
+  # Backup Service
+  backup:
+    image: postgres:15-alpine
+    container_name: corallum-backup
+    restart: unless-stopped
+    environment:
+      - PGPASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - ./scripts/backup.sh:/backup.sh:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: /bin/bash -c "chmod +x /backup.sh && crond -f"
+    networks:
+      - corallum-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  ollama_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  loki_data:
+    driver: local
+
+networks:
+  corallum-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

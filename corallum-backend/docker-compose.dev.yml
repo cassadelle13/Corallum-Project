@@ -1,0 +1,65 @@
+services:
+  # Corallum Backend Application
+  corallum-backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+      - PORT=8000
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-your-api-key-here}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=corallum
+      - DB_USER=corallum
+      - DB_PASSWORD=corallum123
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./logs:/app/logs
+      - ./dist:/app/dist
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: corallum-postgres
+    environment:
+      POSTGRES_DB: corallum
+      POSTGRES_USER: corallum
+      POSTGRES_PASSWORD: corallum123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U corallum -d corallum"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: corallum-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

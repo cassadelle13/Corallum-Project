@@ -1,0 +1,16 @@
+{
+  "name": "corallum-backend",
+  "version": "1.0.0",
+  "description": "AI-powered workflow automation platform",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.ts",
+    "start": "node src/index.ts",
+    "test": "echo \"No tests specified\" && exit 1"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.2.0",
+    "ts-node": "^10.9.0"
+  }
+}
